@@ -72,11 +72,11 @@ contract PumpFaxtToken is ERC20withMetadata, ReentrancyGuard {
     {
         _interface = PumpFaxtInterface(msg.sender);
         _token = IERC20(address(this));
-        frax = IERC20(_interface._frax);
+        _frax = IERC20(_interface._frax);
 
-        _reserveThreshold = reserveThreshold_;
         _finalSupply = initialSupply_;
-        _virtualReserve = initialVirtualReserve_
+        _virtualReserve = initialVirtualReserve_;
+        _reserveThreshold = initialVirtualReserve_ * 2;
         updateReserveAndSupply();
     }
 
@@ -166,7 +166,7 @@ contract PumpFaxtToken is ERC20withMetadata, ReentrancyGuard {
     function buy(
         uint256 amountIn_,
         uint256 amountOutMin_
-    ) public nonReentrant whileTradable {
+    ) external nonReentrant whileTradable {
         uint256 amountOutCalculated = calculateTokensReceivedByFraxAmount(
             amountIn_
         );
@@ -186,7 +186,7 @@ contract PumpFaxtToken is ERC20withMetadata, ReentrancyGuard {
     function sell(
         uint256 amountIn_,
         uint256 amountOutMin_
-    ) public nonReentrant whileTradable {
+    ) external nonReentrant whileTradable {
         uint256 refundCalculated = calculateSellRefundByTokenAmount(amountIn_);
 
         require(
